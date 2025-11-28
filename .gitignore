@@ -427,6 +427,10 @@ Makefile
 
 # vcpkg packages (optional)
 vcpkg_installed/
+/vcpkg/buildtrees/
+/vcpkg/downloads/
+/vcpkg/packages/
+/vcpkg/installed/
 
 # Glad generated files (if regenerated)
 **/glad/gen/
