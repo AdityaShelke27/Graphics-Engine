@@ -416,3 +416,20 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# CMake
+/build/
+/out/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# vcpkg packages (optional)
+vcpkg_installed/
+
+# Glad generated files (if regenerated)
+**/glad/gen/
+
+# Visual Studio Code
+.vscode/
