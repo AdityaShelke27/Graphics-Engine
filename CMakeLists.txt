@@ -8,9 +8,22 @@ find_package(glm CONFIG REQUIRED)
 
 include_directories(external/glad/include)
 
-add_executable(Graphics-Engine 
-    src/main.cpp
-    src/glad.c
+file(GLOB_RECURSE SOURCES
+    src/*.cpp
+    src/*.c
+    src/*.h
+)
+
+add_executable(Graphics-Engine ${SOURCES})
+
+set_property(TARGET Graphics-Engine PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+
+# Copy shaders folder to build directory
+add_custom_command(
+    TARGET Graphics-Engine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/shaders
+        $<TARGET_FILE_DIR:Graphics-Engine>/shaders
 )
 
 target_link_libraries(Graphics-Engine

@@ -1,28 +1,27 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "Shader.h"
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
 const char* vertexShaderCode = "#version 330 core\n"
                                 "layout (location = 0) in vec3 aPos;\n"
+                                "layout (location = 1) in vec3 colorPos;\n"
+                                "out vec3 ourColor;"
                                 "void main() \n"
                                 "{\n"
-                                "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
+                                "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
+                                "   ourColor = colorPos;"
                                 "}\0";
 
 const char* fragmentShaderCode = "#version 330 core\n"
                                 "out vec4 fragColor;\n"
+                                "in vec3 ourColor;\n"
                                 "void main() \n"
                                 "{\n"
-                                "fragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                                "}\0";
-const char* fragmentShaderYellowCode = "#version 330 core\n"
-                                "out vec4 fragColor;\n"
-                                "void main() \n"
-                                "{\n"
-                                "fragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+                                "   fragColor = vec4(ourColor, 1.0f);\n"
                                 "}\0";
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -72,7 +71,7 @@ static void createShaderProgram(unsigned int* shaderProgram, const char** vertex
     glAttachShader(*shaderProgram, fragmentShader);
     glLinkProgram(*shaderProgram);
 
-    glGetProgramiv(*shaderProgram, GL_COMPILE_STATUS, &success);
+    glGetProgramiv(*shaderProgram, GL_LINK_STATUS, &success);
     if (!success)
     {
         glGetProgramInfoLog(*shaderProgram, 512, NULL, info_Log);
@@ -88,7 +87,7 @@ static void createVAO(unsigned int* VAO)
     glBindVertexArray(*VAO);
 }
 template<size_t N>
-static void createBufferData(unsigned int* VBO, float (&vertices)[N], int idx)
+static void createBufferData(unsigned int* VBO, float (&vertices)[N])
 {
     /*float vertices[] =
     {
@@ -111,9 +110,6 @@ static void createBufferData(unsigned int* VBO, float (&vertices)[N], int idx)
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);*/
-
-    glVertexAttribPointer(idx, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(idx);
 }
 
 int main()
@@ -146,28 +142,24 @@ int main()
         return -1;
     }
 
-    unsigned int shaderProgram, shaderProgram2;
-    createShaderProgram(&shaderProgram, &vertexShaderCode, &fragmentShaderCode);
-    createShaderProgram(&shaderProgram2, &vertexShaderCode, &fragmentShaderYellowCode);
+    //createShaderProgram(&shaderProgram, &vertexShaderCode, &fragmentShaderCode);
+    std::cout << "Path: " << std::filesystem::current_path() << std::endl;
+    Shader ourShader("/shaders/basic.fs", "/shaders/basic.vs");
     float vertices[] =
     {
-        -0.5f, -0.5f, 0.0f,
-        0.0f, -0.5f, 0.0f,
-        -0.25f, 0.5f, 0.0f,
+        // Vertices                Colors
+        -0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.0f,       0.0f, 1.0f, 0.0f,
+        0.0f, 0.5f, 0.0f,        0.0f, 0.0f, 1.0f,
     };
-    
-    float vertices2[] =
-    {
-        0.0f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.25f, 0.5f, 0.0f,
-    };
-    unsigned int VAO, VAO2, VBO, VBO2;
-    createVAO(&VAO);
-    createBufferData(&VBO, vertices, 0);
-    createVAO(&VAO2);
-    createBufferData(&VBO2, vertices2, 0);
 
+    unsigned int VAO, VBO;
+    createVAO(&VAO);
+    createBufferData(&VBO, vertices);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window))
@@ -177,13 +169,8 @@ int main()
 
         processInput(window);
 
-        glUseProgram(shaderProgram);
+        ourShader.use();
         glBindVertexArray(VAO);
-        //glEnableVertexAttribArray(0);
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glUseProgram(shaderProgram2);
-        glBindVertexArray(VAO2);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glfwSwapBuffers(window);
