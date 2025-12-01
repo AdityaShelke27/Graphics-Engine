@@ -144,7 +144,7 @@ int main()
 
     //createShaderProgram(&shaderProgram, &vertexShaderCode, &fragmentShaderCode);
     std::cout << "Path: " << std::filesystem::current_path() << std::endl;
-    Shader ourShader("/shaders/basic.fs", "/shaders/basic.vs");
+    Shader ourShader("\\shaders\\basic.vs", "\\shaders\\basic.fs");
     float vertices[] =
     {
         // Vertices                Colors

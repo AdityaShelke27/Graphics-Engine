@@ -16,9 +16,14 @@ file(GLOB_RECURSE SOURCES
 
 add_executable(Graphics-Engine ${SOURCES})
 
-set_property(TARGET Graphics-Engine PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+# Give shader directory to C++ code
+target_compile_definitions(Graphics-Engine PRIVATE
+    SHADER_DIR="${CMAKE_SOURCE_DIR}/shaders"
+)
 
-# Copy shaders folder to build directory
+#set_property(TARGET Graphics-Engine PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+
+# Portable shader copying (optional)
 add_custom_command(
     TARGET Graphics-Engine POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
