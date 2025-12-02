@@ -21,10 +21,12 @@ static void processInput(GLFWwindow* window, float &alphaValue)
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         alphaValue += 0.01f;
+        if (alphaValue > 1) alphaValue = 1;
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         alphaValue -= 0.01f;
+        if (alphaValue < 0) alphaValue = 0;
     }
 }
 static void createShaderProgram(unsigned int* shaderProgram, const char** vertexShaderCode, const char** fragmentShaderCode)
