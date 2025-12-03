@@ -3,6 +3,9 @@
 #include <iostream>
 #include "Shader.h"
 #include "stb_image.h"
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -134,6 +137,7 @@ int main()
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -185,27 +189,41 @@ int main()
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    glm::mat4 trans(1);
+    
+    trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+
+    unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+    
+
     while (!glfwWindowShouldClose(window))
     {
         processInput(window, alphaValue);
 
         glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
         
+        ourShader.use();
+
+        ourShader.setFloat("alphaValue", alphaValue);
+
+        float time = (float)glfwGetTime();
+        trans = glm::mat4(1);
+        trans = glm::translate(trans, glm::vec3(-cos(time) / 2.0f, sin(time) / 2.0f, 0.0f));
+        trans = glm::rotate(trans, glm::radians(time * 5), glm::vec3(0.0f, 0.0f, 1.0f));
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
-        ourShader.use();
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
-        ourShader.use();
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        ourShader.setFloat("alphaValue", alphaValue);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

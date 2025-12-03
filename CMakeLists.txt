@@ -6,7 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
-include_directories(external/glad/include)
+include_directories(
+    external/glad/include
+    external/glm
+)
 
 file(GLOB_RECURSE SOURCES
     src/*.cpp
