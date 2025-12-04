@@ -1,5 +1,5 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glad\glad.h>
+#include <GLFW\glfw3.h>
 #include <iostream>
 #include "Shader.h"
 #include "stb_image.h"
@@ -9,6 +9,15 @@
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
+
+glm::vec3 cameraPosition = glm::vec3(0, 0, 1);
+glm::vec3 cameraFront = glm::vec3(0, 0, -1);
+glm::vec3 cameraUp = glm::vec3(0, 1, 0);
+
+float deltaTime = 0;
+float currentTime = 0;
+
+float cameraSpeed = 10.0f;
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -30,6 +39,22 @@ static void processInput(GLFWwindow* window, float &alphaValue)
     {
         alphaValue -= 0.01f;
         if (alphaValue < 0) alphaValue = 0;
+    }
+    if (glfwGetKey(window, GLFW_KEY_W))
+    {
+        cameraPosition += cameraSpeed * deltaTime * cameraFront;
+    }
+    if (glfwGetKey(window, GLFW_KEY_S))
+    {
+        cameraPosition -= cameraSpeed * deltaTime * cameraFront;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A))
+    {
+        cameraPosition -= cameraSpeed * deltaTime * glm::cross(cameraFront, cameraUp);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D))
+    {
+        cameraPosition += cameraSpeed * deltaTime * glm::cross(cameraFront, cameraUp);
     }
 }
 static void createShaderProgram(unsigned int* shaderProgram, const char** vertexShaderCode, const char** fragmentShaderCode)
@@ -147,18 +172,66 @@ int main()
 
     //createShaderProgram(&shaderProgram, &vertexShaderCode, &fragmentShaderCode);
     Shader ourShader("./shaders/basic.vs", "./shaders/basic.fs");
-    float vertices[] =
-    {
-        // Vertices                Colors                 Texture coords
-        -0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f,        0.0f, 0.0f,          // Bottom left
-        0.5f, -0.5f, 0.0f,       0.0f, 1.0f, 0.0f,        1.0f, 0.0f,          // Bottom right
-        -0.5f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,        0.0f, 1.0f,          // Top left
-        0.5f, 0.5f, 0.0f,        1.0f, 1.0f, 0.0f,        1.0f, 1.0f,          // Top right
+    float vertices[] = {
+        // Vertices                     Texture Coords
+        -0.5f, -0.5f, -0.5f,            0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,            1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,            0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,            0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,            1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,            0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,            1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,            1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,            1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,            0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,            0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,            0.0f, 1.0f
     };
     unsigned int indices[] =
     {
         1, 0, 2,
         3, 1, 2
+    };
+    glm::vec3 cubePositions[] = {
+        glm::vec3(0.0f,  0.0f,  0.0f),
+        glm::vec3(2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f,  2.0f, -2.5f),
+        glm::vec3(1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
     stbi_set_flip_vertically_on_load(true);
@@ -166,20 +239,18 @@ int main()
     createTexture(texture, "./textures/container.jpg", GL_RGB);
     createTexture(texture2, "./textures/awesomeface.png", GL_RGBA);
 
-    unsigned int VAO, VBO, EBO;
+    unsigned int VAO, VBO;
     createVAO(&VAO);
     createBufferData(&VBO, vertices);
 
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    /*glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);*/
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
 
     ourShader.use();
     ourShader.setInt("texture1", 0);
@@ -189,30 +260,54 @@ int main()
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    glm::mat4 modal(1);
-    
-    modal = glm::rotate(modal, glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    unsigned int modalLoc = glGetUniformLocation(ourShader.ID, "modal");
+    unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+    unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+
+    glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
     {
         processInput(window, alphaValue);
 
         glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        
-        ourShader.use();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        ourShader.setFloat("alphaValue", alphaValue);
+        deltaTime = glfwGetTime() - currentTime;
+        currentTime = glfwGetTime();
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
+
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
+
+        ourShader.use();
+
+        ourShader.setFloat("alphaValue", alphaValue);
+        
+        glm::mat4 view(1);
+        glm::mat4 projection(1);
+
+        //glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+        
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        const float radius = 10;
+        for (int i = 0; i < 10; i++)
+        {
+            glm::mat4 modal = glm::mat4(1);
+            
+            view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, up);
+            modal = glm::translate(modal, cubePositions[i]);
+            modal = glm::rotate(modal, (float)glfwGetTime() * glm::radians(45.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+            projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / HEIGHT, 0.1f, 100.0f);
+            glUniformMatrix4fv(modalLoc, 1, GL_FALSE, glm::value_ptr(modal));
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
