@@ -2,6 +2,7 @@
 #include <GLFW\glfw3.h>
 #include <iostream>
 #include "Shader.h"
+#include "Camera.h"
 #include "stb_image.h"
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -10,20 +11,29 @@
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
-glm::vec3 cameraPosition = glm::vec3(0, 0, 1);
-glm::vec3 cameraFront = glm::vec3(0, 0, -1);
-glm::vec3 cameraUp = glm::vec3(0, 1, 0);
-
 float deltaTime = 0;
 float currentTime = 0;
 
-float cameraSpeed = 10.0f;
+glm::vec2 mousePos;
+
+Camera cam;
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
+static void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
+{
+    cam.scroll(yOffset);
+}
+void mouse_callback(GLFWwindow* window, double xPos, double yPos)
+{
+    glm::vec2 delta = glm::vec2(xPos - mousePos.x, yPos - mousePos.y);
+    cam.mouseMovement(delta);
 
+    mousePos.x = (float)xPos;
+    mousePos.y = (float)yPos;
+}
 static void processInput(GLFWwindow* window, float &alphaValue)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -42,19 +52,19 @@ static void processInput(GLFWwindow* window, float &alphaValue)
     }
     if (glfwGetKey(window, GLFW_KEY_W))
     {
-        cameraPosition += cameraSpeed * deltaTime * cameraFront;
+        cam.moveFront();
     }
     if (glfwGetKey(window, GLFW_KEY_S))
     {
-        cameraPosition -= cameraSpeed * deltaTime * cameraFront;
+        cam.moveBack();
     }
     if (glfwGetKey(window, GLFW_KEY_A))
     {
-        cameraPosition -= cameraSpeed * deltaTime * glm::cross(cameraFront, cameraUp);
+        cam.moveLeft();
     }
     if (glfwGetKey(window, GLFW_KEY_D))
     {
-        cameraPosition += cameraSpeed * deltaTime * glm::cross(cameraFront, cameraUp);
+        cam.moveRight();
     }
 }
 static void createShaderProgram(unsigned int* shaderProgram, const char** vertexShaderCode, const char** fragmentShaderCode)
@@ -138,6 +148,10 @@ static void createBufferData(unsigned int* VBO, float (&vertices)[N])
     glBindBuffer(GL_ARRAY_BUFFER, *VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 }
+static void disableMouse(GLFWwindow* window)
+{
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
 
 int main()
 {
@@ -161,7 +175,11 @@ int main()
     }
 
     glfwMakeContextCurrent(window);
+
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+
     glfwSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -258,7 +276,7 @@ int main()
 
     float alphaValue = 0.2f;
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    disableMouse(window);
 
     unsigned int modalLoc = glGetUniformLocation(ourShader.ID, "modal");
     unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
@@ -273,8 +291,9 @@ int main()
         glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        deltaTime = glfwGetTime() - currentTime;
-        currentTime = glfwGetTime();
+        float time = (float)glfwGetTime();
+        deltaTime =  time - currentTime;
+        currentTime = time;
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -286,26 +305,18 @@ int main()
 
         ourShader.setFloat("alphaValue", alphaValue);
         
-        glm::mat4 view(1);
-        glm::mat4 projection(1);
-
-        //glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-        
         glBindVertexArray(VAO);
 
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, cam.getView());
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, cam.getProjection());
         const float radius = 10;
         for (int i = 0; i < 10; i++)
         {
             glm::mat4 modal = glm::mat4(1);
             
-            view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, up);
             modal = glm::translate(modal, cubePositions[i]);
             modal = glm::rotate(modal, (float)glfwGetTime() * glm::radians(45.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-            projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / HEIGHT, 0.1f, 100.0f);
             glUniformMatrix4fv(modalLoc, 1, GL_FALSE, glm::value_ptr(modal));
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
