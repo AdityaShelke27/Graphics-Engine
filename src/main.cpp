@@ -20,6 +20,7 @@ Camera cam;
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    cam.setWidthHeight(width, height);
     glViewport(0, 0, width, height);
 }
 static void scroll_callback(GLFWwindow* window, double xOffset, double yOffset)
@@ -52,19 +53,19 @@ static void processInput(GLFWwindow* window, float &alphaValue)
     }
     if (glfwGetKey(window, GLFW_KEY_W))
     {
-        cam.moveFront();
+        cam.moveFront(deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_S))
     {
-        cam.moveBack();
+        cam.moveBack(deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_A))
     {
-        cam.moveLeft();
+        cam.moveLeft(deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_D))
     {
-        cam.moveRight();
+        cam.moveRight(deltaTime);
     }
 }
 static void createShaderProgram(unsigned int* shaderProgram, const char** vertexShaderCode, const char** fragmentShaderCode)
@@ -307,6 +308,7 @@ int main()
         
         glBindVertexArray(VAO);
 
+        cam.calculate();
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, cam.getView());
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, cam.getProjection());
         const float radius = 10;

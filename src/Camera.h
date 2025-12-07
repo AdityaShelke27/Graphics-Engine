@@ -38,19 +38,19 @@ class Camera
                 fov = 1.0f;
             }
         }
-        void moveFront()
+        void moveFront(float deltaTime)
         {
             cameraPosition += cameraSpeed * deltaTime * cameraFront;
         }
-        void moveBack()
+        void moveBack(float deltaTime)
         {
             cameraPosition -= cameraSpeed * deltaTime * cameraFront;
         }
-        void moveRight()
+        void moveRight(float deltaTime)
         {
             cameraPosition += cameraSpeed * deltaTime * glm::cross(cameraFront, cameraUp);
         }
-        void moveLeft()
+        void moveLeft(float deltaTime)
         {
             cameraPosition -= cameraSpeed * deltaTime * glm::cross(cameraFront, cameraUp);
         }
@@ -72,6 +72,11 @@ class Camera
         {
             return glm::value_ptr(projection);
         }
+        void setWidthHeight(int width, int height)
+        {
+            WIDTH = width;
+            HEIGHT = height;
+        }
 
 	private:
 		glm::vec3 cameraPosition = glm::vec3(0, 0, 1);
@@ -82,4 +87,5 @@ class Camera
         glm::mat4 view;
         glm::mat4 projection;
         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+        int WIDTH = 800, HEIGHT = 600;
 };
