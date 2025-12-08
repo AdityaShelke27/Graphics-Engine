@@ -38,21 +38,13 @@ class Camera
                 fov = 1.0f;
             }
         }
-        void moveFront(float deltaTime)
+        void moveForward(float deltaTime, float direction)
         {
-            cameraPosition += cameraSpeed * deltaTime * cameraFront;
+            cameraPosition += cameraSpeed * deltaTime * direction * cameraFront;
         }
-        void moveBack(float deltaTime)
+        void moveRight(float deltaTime, float direction)
         {
-            cameraPosition -= cameraSpeed * deltaTime * cameraFront;
-        }
-        void moveRight(float deltaTime)
-        {
-            cameraPosition += cameraSpeed * deltaTime * glm::cross(cameraFront, cameraUp);
-        }
-        void moveLeft(float deltaTime)
-        {
-            cameraPosition -= cameraSpeed * deltaTime * glm::cross(cameraFront, cameraUp);
+            cameraPosition += cameraSpeed * deltaTime * direction * glm::cross(cameraFront, cameraUp);
         }
         void calculate()
         {

@@ -17,7 +17,7 @@ file(GLOB_RECURSE SOURCES
     src/*.h
 )
 
-add_executable(Graphics-Engine ${SOURCES} "src/image_loader.cpp")
+add_executable(Graphics-Engine ${SOURCES} "src/image_loader.cpp" "src/Light.h")
 
 # Give shader directory to C++ code
 target_compile_definitions(Graphics-Engine PRIVATE

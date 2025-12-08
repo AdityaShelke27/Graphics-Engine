@@ -7,6 +7,7 @@
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
+#include "Light.h"
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -53,19 +54,19 @@ static void processInput(GLFWwindow* window, float &alphaValue)
     }
     if (glfwGetKey(window, GLFW_KEY_W))
     {
-        cam.moveFront(deltaTime);
+        cam.moveForward(deltaTime, 1.0f);
     }
     if (glfwGetKey(window, GLFW_KEY_S))
     {
-        cam.moveBack(deltaTime);
+        cam.moveForward(deltaTime, -1.0f);
     }
     if (glfwGetKey(window, GLFW_KEY_A))
     {
-        cam.moveLeft(deltaTime);
+        cam.moveRight(deltaTime, -1.0f);
     }
     if (glfwGetKey(window, GLFW_KEY_D))
     {
-        cam.moveRight(deltaTime);
+        cam.moveRight(deltaTime, 1.0f);
     }
 }
 static void createShaderProgram(unsigned int* shaderProgram, const char** vertexShaderCode, const char** fragmentShaderCode)
@@ -191,6 +192,8 @@ int main()
 
     //createShaderProgram(&shaderProgram, &vertexShaderCode, &fragmentShaderCode);
     Shader ourShader("./shaders/basic.vs", "./shaders/basic.fs");
+    
+
     float vertices[] = {
         // Vertices                     Texture Coords
         -0.5f, -0.5f, -0.5f,            0.0f, 0.0f,
@@ -242,7 +245,7 @@ int main()
     };
     glm::vec3 cubePositions[] = {
         glm::vec3(0.0f,  0.0f,  0.0f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
+        /*glm::vec3(2.0f,  5.0f, -15.0f),
         glm::vec3(-1.5f, -2.2f, -2.5f),
         glm::vec3(-3.8f, -2.0f, -12.3f),
         glm::vec3(2.4f, -0.4f, -3.5f),
@@ -250,7 +253,7 @@ int main()
         glm::vec3(1.3f, -2.0f, -2.5f),
         glm::vec3(1.5f,  2.0f, -2.5f),
         glm::vec3(1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
+        glm::vec3(-1.3f,  1.0f, -1.5f)*/
     };
 
     stbi_set_flip_vertically_on_load(true);
@@ -262,10 +265,6 @@ int main()
     createVAO(&VAO);
     createBufferData(&VBO, vertices);
 
-    /*glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);*/
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(0);
@@ -274,6 +273,7 @@ int main()
     ourShader.use();
     ourShader.setInt("texture1", 0);
     ourShader.setInt("texture2", 1);
+    ourShader.setVec3("lightColor", glm::vec3(1));
 
     float alphaValue = 0.2f;
 
@@ -282,6 +282,8 @@ int main()
     unsigned int modalLoc = glGetUniformLocation(ourShader.ID, "modal");
     unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
     unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+
+    Light light(glm::vec3(1.2f, 0, 1), std::vector<float>(std::begin(vertices), std::end(vertices)));
 
     glEnable(GL_DEPTH_TEST);
 
@@ -293,8 +295,16 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         float time = (float)glfwGetTime();
-        deltaTime =  time - currentTime;
+        deltaTime = time - currentTime;
         currentTime = time;
+
+        cam.calculate();
+
+        light.calculate(cam.getView(), cam.getProjection());
+
+        ourShader.use();
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, cam.getView());
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, cam.getProjection());
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -302,20 +312,13 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
-        ourShader.use();
-
         ourShader.setFloat("alphaValue", alphaValue);
-        
         glBindVertexArray(VAO);
 
-        cam.calculate();
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, cam.getView());
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, cam.getProjection());
-        const float radius = 10;
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 1; i++)
         {
-            glm::mat4 modal = glm::mat4(1);
-            
+            glm::mat4 modal(1);
+
             modal = glm::translate(modal, cubePositions[i]);
             modal = glm::rotate(modal, (float)glfwGetTime() * glm::radians(45.0f), glm::vec3(0.5f, 1.0f, 0.0f));
             glUniformMatrix4fv(modalLoc, 1, GL_FALSE, glm::value_ptr(modal));
