@@ -195,48 +195,48 @@ int main()
     
 
     float vertices[] = {
-        // Vertices                     Texture Coords
-        -0.5f, -0.5f, -0.5f,            0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,            1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,            0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,            0.0f, 0.0f,
+        // Vertices                     Texture Coords          Normals
+        -0.5f, -0.5f, -0.5f,            0.0f, 0.0f,         0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,            1.0f, 0.0f,         0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,         0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,         0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,            0.0f, 1.0f,         0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,            0.0f, 0.0f,         0.0f,  0.0f, -1.0f,
 
-        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,            1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,            1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,            1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,            0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,         0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,            1.0f, 0.0f,         0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 1.0f,         0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 1.0f,         0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,            0.0f, 1.0f,         0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,         0.0f,  0.0f, 1.0f,
 
-        -0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,            1.0f, 0.0f,         -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,            1.0f, 1.0f,         -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,         -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,         -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,         -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,            1.0f, 0.0f,         -1.0f,  0.0f,  0.0f,
 
-         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,         1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,         1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,            0.0f, 1.0f,         1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,            0.0f, 1.0f,         1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,            0.0f, 0.0f,         1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,         1.0f,  0.0f,  0.0f,
 
-        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,            1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,            1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,            1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,         0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,            1.0f, 1.0f,         0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,            1.0f, 0.0f,         0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,            1.0f, 0.0f,         0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,            0.0f, 0.0f,         0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,            0.0f, 1.0f,         0.0f, -1.0f,  0.0f,
 
-        -0.5f,  0.5f, -0.5f,            0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,            0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,            0.0f, 1.0f
+        -0.5f,  0.5f, -0.5f,            0.0f, 1.0f,         0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,            1.0f, 1.0f,         0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,         0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,            1.0f, 0.0f,         0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,            0.0f, 0.0f,         0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,            0.0f, 1.0f,         0.0f,  1.0f,  0.0f,
     };
     unsigned int indices[] =
     {
@@ -265,10 +265,12 @@ int main()
     createVAO(&VAO);
     createBufferData(&VBO, vertices);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 
     ourShader.use();
     ourShader.setInt("texture1", 0);
