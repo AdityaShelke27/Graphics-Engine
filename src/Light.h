@@ -6,17 +6,20 @@
 class Light
 {
 	public:
-		Light(glm::vec3 pos, const std::vector<float>& vertices)
+		glm::vec3 lightPos;
+		Light(glm::vec3 pos, const std::vector<float>& vertices, const int strideSize)
 		{
+			lightPos = pos;
+
 			glGenVertexArrays(1, &lightVAO);
 			glBindVertexArray(lightVAO);
 			glGenBuffers(1, &lightVBO);
 			glBindBuffer(GL_ARRAY_BUFFER, lightVBO);
 			glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, strideSize * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(0);
 
-			modal = glm::translate(modal, pos);
+			modal = glm::translate(modal, lightPos);
 			
 			lightModalLoc = glGetUniformLocation(lightShader.ID, "modal");
 			lightViewLoc = glGetUniformLocation(lightShader.ID, "view");
@@ -34,6 +37,10 @@ class Light
 			glUniformMatrix4fv(lightModalLoc, 1, GL_FALSE, glm::value_ptr(modal));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 			glBindVertexArray(0);
+		}
+		Shader* getShader()
+		{
+			return &lightShader;
 		}
 	private:
 		unsigned int lightVAO = 0, lightVBO = 0;

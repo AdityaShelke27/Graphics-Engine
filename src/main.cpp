@@ -238,8 +238,7 @@ int main()
         -0.5f,  0.5f,  0.5f,            0.0f, 0.0f,         0.0f,  1.0f,  0.0f,
         -0.5f,  0.5f, -0.5f,            0.0f, 1.0f,         0.0f,  1.0f,  0.0f,
     };
-    unsigned int indices[] =
-    {
+    unsigned int indices[] ={
         1, 0, 2,
         3, 1, 2
     };
@@ -285,8 +284,8 @@ int main()
     unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
     unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
 
-    Light light(glm::vec3(1.2f, 0, 1), std::vector<float>(std::begin(vertices), std::end(vertices)));
-
+    Light light(glm::vec3(1.2f, 0, 1), std::vector<float>(std::begin(vertices), std::end(vertices)), 8);
+    light.getShader()->setVec3("lightPos", light.lightPos);
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
