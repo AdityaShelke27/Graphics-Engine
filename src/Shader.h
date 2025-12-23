@@ -90,7 +90,7 @@ class Shader
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
 		}
-		void use()
+		void use() const
 		{
 			glUseProgram(ID);
 		}

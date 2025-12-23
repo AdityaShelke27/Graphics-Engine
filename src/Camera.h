@@ -46,6 +46,10 @@ class Camera
         {
             cameraPosition += cameraSpeed * deltaTime * direction * glm::cross(cameraFront, cameraUp);
         }
+        void moveUp(float deltaTime, float direction)
+        {
+            cameraPosition += cameraSpeed * deltaTime * direction * cameraUp;
+        }
         void calculate()
         {
             direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -69,15 +73,19 @@ class Camera
             WIDTH = width;
             HEIGHT = height;
         }
+        glm::vec3* getPosition()
+        {
+            return &cameraPosition;
+        }
 
 	private:
 		glm::vec3 cameraPosition = glm::vec3(0, 0, 1);
 		glm::vec3 cameraFront = glm::vec3(0, 0, -1);
 		glm::vec3 cameraUp = glm::vec3(0, 1, 0);
-		float yaw = -90, pitch;
-		glm::vec3 direction;
-        glm::mat4 view;
-        glm::mat4 projection;
+		float yaw = -90, pitch = 0;
+		glm::vec3 direction = glm::vec3(0);
+        glm::mat4 view = glm::mat4(1);
+        glm::mat4 projection = glm::mat4(1);
         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
         int WIDTH = 800, HEIGHT = 600;
 };

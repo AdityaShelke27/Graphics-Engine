@@ -7,6 +7,13 @@ class Light
 {
 	public:
 		glm::vec3 lightPos;
+		void setLightPosition(glm::vec3 pos)
+		{
+			lightPos = pos;
+			modal = glm::mat4(1);
+			modal = glm::translate(modal, lightPos);
+
+		}
 		Light(glm::vec3 pos, const std::vector<float>& vertices, const int strideSize)
 		{
 			lightPos = pos;

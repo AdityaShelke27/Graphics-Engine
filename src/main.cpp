@@ -68,6 +68,14 @@ static void processInput(GLFWwindow* window, float &alphaValue)
     {
         cam.moveRight(deltaTime, 1.0f);
     }
+    if (glfwGetKey(window, GLFW_KEY_Q))
+    {
+        cam.moveUp(deltaTime, -1.0f);
+    }
+    if (glfwGetKey(window, GLFW_KEY_E))
+    {
+        cam.moveUp(deltaTime, 1.0f);
+    }
 }
 static void createShaderProgram(unsigned int* shaderProgram, const char** vertexShaderCode, const char** fragmentShaderCode)
 {
@@ -285,7 +293,7 @@ int main()
     unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
 
     Light light(glm::vec3(1.2f, 0, 1), std::vector<float>(std::begin(vertices), std::end(vertices)), 8);
-    light.getShader()->setVec3("lightPos", light.lightPos);
+    
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
@@ -298,14 +306,19 @@ int main()
         float time = (float)glfwGetTime();
         deltaTime = time - currentTime;
         currentTime = time;
+        float radius = 4;
 
         cam.calculate();
+
+        light.setLightPosition(glm::vec3(radius * sin(time), radius * cos(time), radius * sin(time)));
 
         light.calculate(cam.getView(), cam.getProjection());
 
         ourShader.use();
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, cam.getView());
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, cam.getProjection());
+        ourShader.setVec3("lightPos", light.lightPos);
+        ourShader.setVec3("viewPos", *cam.getPosition());
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -320,8 +333,8 @@ int main()
         {
             glm::mat4 modal(1);
 
-            modal = glm::translate(modal, cubePositions[i]);
-            modal = glm::rotate(modal, (float)glfwGetTime() * glm::radians(45.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+            modal = glm::translate(modal, glm::vec3(0)/*cubePositions[i]*/);
+            //modal = glm::rotate(modal, (float)glfwGetTime() * glm::radians(45.0f), glm::vec3(0.5f, 1.0f, 0.0f));
             glUniformMatrix4fv(modalLoc, 1, GL_FALSE, glm::value_ptr(modal));
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
