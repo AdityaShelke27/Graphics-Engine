@@ -198,10 +198,8 @@ int main()
         return -1;
     }
 
-    //createShaderProgram(&shaderProgram, &vertexShaderCode, &fragmentShaderCode);
     Shader ourShader("./shaders/basic.vs", "./shaders/basic.fs");
     
-
     float vertices[] = {
         // Vertices                     Texture Coords          Normals
         -0.5f, -0.5f, -0.5f,            0.0f, 0.0f,         0.0f,  0.0f, -1.0f,
@@ -279,10 +277,19 @@ int main()
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
 
+    Light light(glm::vec3(1.2f, 0, 1), std::vector<float>(std::begin(vertices), std::end(vertices)), 8);
+
     ourShader.use();
     ourShader.setInt("texture1", 0);
     ourShader.setInt("texture2", 1);
-    ourShader.setVec3("lightColor", glm::vec3(1));
+    ourShader.setVec3("light.ambient", glm::vec3(0.1f));
+    ourShader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    ourShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+    ourShader.setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+    ourShader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+    ourShader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+    ourShader.setFloat("material.shininess", 1);
 
     float alphaValue = 0.2f;
 
@@ -292,8 +299,6 @@ int main()
     unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
     unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
 
-    Light light(glm::vec3(1.2f, 0, 1), std::vector<float>(std::begin(vertices), std::end(vertices)), 8);
-    
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
@@ -313,11 +318,15 @@ int main()
         light.setLightPosition(glm::vec3(radius * sin(time), radius * cos(time), radius * sin(time)));
 
         light.calculate(cam.getView(), cam.getProjection());
+        light.setLightColor(glm::vec3(sin(time * 2), sin(time * 0.7f), sin(time * 1.3f)));
 
         ourShader.use();
+        ourShader.setVec3("light.ambient", light.getlightColor() * 0.1f);
+        ourShader.setVec3("light.diffuse", light.getlightColor() * 0.5f);
+
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, cam.getView());
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, cam.getProjection());
-        ourShader.setVec3("lightPos", light.lightPos);
+        ourShader.setVec3("light.position", light.lightPos);
         ourShader.setVec3("viewPos", *cam.getPosition());
 
         glActiveTexture(GL_TEXTURE0);

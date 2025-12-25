@@ -12,26 +12,40 @@ uniform float alphaValue;
 uniform mat4 view;
 uniform mat4 modal;
 
-uniform vec3 lightColor;
-uniform vec3 lightPos;
 uniform vec3 viewPos;
+
+struct Light
+{
+	vec3 position;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+struct Material
+{
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
+};
+uniform Material material;
+uniform Light light;
 
 void main()
 {
-	float ambientStrength = 0.1f;
-	float specularStrength = 0.1f;
-	vec3 ambience = lightColor * ambientStrength;
+	vec3 ambience = light.ambient * material.ambient;
 	mat3 viewModal = mat3(view * modal);
 
 	vec3 norm = normalize(Normals);
-	vec3 lightDir = viewModal * normalize(lightPos - fragPos);
+	vec3 lightDir = viewModal * normalize(light.position - fragPos);
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = lightColor * diff;
+	vec3 diffuse = light.diffuse * (diff * material.diffuse);
 
 	vec3 viewDir = vec3(0, 0, 1);//normalize(viewPos - fragPos);
-	vec3 reflectDir = reflect(viewModal * -lightPos, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 2);
-	vec3 specular = specularStrength * spec * lightColor;
+	vec3 reflectDir = reflect(viewModal * -light.position, norm);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	vec3 specular = material.specular * spec * light.specular;
 
 	vec3 result = ambience + diffuse + specular;
 	fragColor = vec4(result, 1.0f) * texture(texture1, TexCoords);

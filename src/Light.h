@@ -7,6 +7,17 @@ class Light
 {
 	public:
 		glm::vec3 lightPos;
+		
+		void setLightColor(glm::vec3 color)
+		{
+			lightColor = color;
+
+			lightShader.setVec3("lightColor", lightColor);
+		}
+		glm::vec3 getlightColor()
+		{
+			return lightColor;
+		}
 		void setLightPosition(glm::vec3 pos)
 		{
 			lightPos = pos;
@@ -53,6 +64,7 @@ class Light
 		unsigned int lightVAO = 0, lightVBO = 0;
 		glm::mat4 modal = glm::mat4(1);
 		Shader lightShader = Shader("./shaders/lightShader.vs", "./shaders/lightShader.fs");
+		glm::vec3 lightColor = glm::vec3(1);
 		unsigned int lightModalLoc;
 		unsigned int lightViewLoc;
 		unsigned int lightProjectionLoc;
