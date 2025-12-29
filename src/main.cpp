@@ -262,9 +262,8 @@ int main()
     };
 
     stbi_set_flip_vertically_on_load(true);
-    unsigned int texture, texture2;
+    unsigned int texture;
     createTexture(texture, "./textures/container.jpg", GL_RGB);
-    createTexture(texture2, "./textures/awesomeface.png", GL_RGBA);
 
     unsigned int VAO, VBO;
     createVAO(&VAO);
@@ -281,12 +280,10 @@ int main()
 
     ourShader.use();
     ourShader.setInt("texture1", 0);
-    ourShader.setInt("texture2", 1);
     ourShader.setVec3("light.ambient", glm::vec3(0.1f));
     ourShader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
     ourShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-    ourShader.setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
     ourShader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
     ourShader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
     ourShader.setFloat("material.shininess", 1);
@@ -332,10 +329,6 @@ int main()
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
 
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
-
-        ourShader.setFloat("alphaValue", alphaValue);
         glBindVertexArray(VAO);
 
         for (int i = 0; i < 1; i++)

@@ -6,9 +6,6 @@ in vec2 TexCoords;
 in vec3 Normals;
 in vec3 fragPos;
 
-uniform sampler2D texture1;
-uniform sampler2D texture2;
-uniform float alphaValue;
 uniform mat4 view;
 uniform mat4 modal;
 
@@ -24,8 +21,7 @@ struct Light
 };
 struct Material
 {
-	vec3 ambient;
-	vec3 diffuse;
+	sampler2D diffuse;
 	vec3 specular;
 	float shininess;
 };
@@ -42,7 +38,7 @@ void main()
 	float diff = max(dot(norm, lightDir), 0.0);
 	vec3 diffuse = light.diffuse * (diff * material.diffuse);
 
-	vec3 viewDir = vec3(0, 0, 1);//normalize(viewPos - fragPos);
+	vec3 viewDir = vec3(0, 0, 1);
 	vec3 reflectDir = reflect(viewModal * -light.position, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 specular = material.specular * spec * light.specular;
